@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <title>tree</title>
+        <link rel="stylesheet" href="demo.css"/>
+        <link rel="stylesheet" href="../jquery.orgchart.css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="../jquery.orgchart.js"></script>
+        <script>
+            //variable data contains the json array
+            data = {
+                            "JSON_data" :[
+                            {"node_id" : 1 , "parent" : 0 , "name" : "VM"},
+                            {"node_id" : 2 , "parent" : 1 , "name" : "PC"},
+                            {"node_id" : 3 , "parent" : 1 , "name" : "AC"},
+                            {"node_id" : 4 , "parent" : 1 , "name" : "PG"},
+                            {"node_id" : 5 , "parent" : 2 , "name" : "AH"},
+                            {"node_id" : 6 , "parent" : 2 , "name" : "AG"},
+                            {"node_id" : 7 , "parent" : 2 , "name" : "HV"},
+                            {"node_id" : 8 , "parent" : 4 , "name" : "X"},
+                            {"node_id" : 9 , "parent" : 4 , "name" : "Y"},
+                            {"node_id" : 10 , "parent" : 4 , "name" : "Z"},
+                            {"node_id" : 11 , "parent" : 6 , "name" : "AT"},
+                            {"node_id" : 12 , "parent" : 6 , "name" : "LS"},
+                            {"node_id" : 13 , "parent" : 6 , "name" : "VK"},
+                            {"node_id" : 14 , "parent" : 7 , "name" : "L"},
+                            {"node_id" : 15 , "parent" : 7 , "name" : "M"},
+                            {"node_id" : 16 , "parent" : 15 , "name" : "M-Child1"},
+                            {"node_id" : 17 , "parent" : 5 , "name" : "AH-Child1"},
+                            {"node_id" : 18 , "parent" : 5 , "name" : "AH-Child2"},
+                            {"node_id" : 19 , "parent" : 5 , "name" : "AH-Child3"}
+                            ]
+            }
+                    
+                    
+            var printable_string = null;
+            var map_obj = null;
+            var node_name_mapping = null;
+            function recurse_on_map(root)
+            {
+                if( root in node_name_mapping )
+                    printable_string += "<li>" + node_name_mapping[root] ;
+                if( root in map_obj )
+                {
+                    if ( map_obj[root].length > 0)
+                        printable_string += "<ul>";
+                    for( var i = 0 ; i < map_obj[root].length ; ++i)
+                    {
+                        recurse_on_map(map_obj[root][i]);
+                    }
+                    if ( map_obj[root].length > 0)
+                        printable_string += "</ul>";
+                }
+                if( root in node_name_mapping )
+                    printable_string +=  "</li>";
+            }
+            function myFunction()
+            {
+                    printable_string = "";
+                    map_obj = new Object();
+                    node_name_mapping = new Object();
+                    
+                    for( var i =0 ; i < data.JSON_data.length ; ++i)
+                    {
+                        var parent_id = data.JSON_data[i].parent;
+                        var node_id = data.JSON_data[i].node_id;
+                        node_name_mapping[node_id] = data.JSON_data[i].name;
+                        if( !(parent_id in map_obj) )
+                        {
+                            map_obj[ parent_id ] = new Array();
+                        }
+                        map_obj[parent_id].push( node_id );
+                    }
+                    printable_string += "<ul id = 'organisation'>";
+                    recurse_on_map(0);
+                    printable_string += "</ul>";
+                    document.getElementById("left").innerHTML = printable_string;
+            }
+            
+        $(function(){
+            myFunction();
+            $("#organisation").orgChart({container: $("#main")});
+        });
+        </script>
+    </head>
+
+    <body>
+        <div id = "super">
+            <div id="left">
+            </div>
+            <div id="content">
+                <div id="main">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
